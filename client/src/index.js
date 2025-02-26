@@ -1,18 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Bootstrap CSS
-import AOS from 'aos';
-import 'aos/dist/aos.css'; // AOS CSS
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import App from "./App";
+import "./assets/css/theme.min.css"; // Ensure this path is correct
 
-// Initialize AOS (Animate On Scroll)
-AOS.init({
-  duration: 800, // Animation duration in milliseconds
-});
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <Router>
+    <Routes>
+      <Route path="/*" element={<App />} />
+    </Routes>
+  </Router>
 );

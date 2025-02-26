@@ -1,49 +1,64 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Project = require('../models/Project');
-const axios = require('axios');
-require('dotenv').config();
+const { db } = require("../services/firebase");
+const { collection, doc, getDoc, setDoc, getDocs } = require("firebase/firestore");
 
-// Fetch all projects
-router.get('/', async (req, res) => {
-    try {
-        const projects = await Project.find();
-        res.json(projects);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+// 🔹 Fetch All Projects
+router.get("/", async (req, res) => {
+  try {
+    const projectsRef = collection(db, "projects");
+    const projectsSnap = await getDocs(projectsRef);
+
+    if (projectsSnap.empty) {
+      return res.status(404).json({ message: "No projects found" });
     }
+
+    let projects = [];
+    projectsSnap.forEach(doc => {
+      projects.push({ id: doc.id, ...doc.data() });
+    });
+
+    res.json(projects);
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-// Create a new project
-router.post('/create', async (req, res) => {
-    try {
-        const { name, description, owner } = req.body;
+// 🔹 Fetch a Single Project by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const projectRef = doc(db, "projects", req.params.id);
+    const projectSnap = await getDoc(projectRef);
 
-        // Create a GitHub repo
-        const githubResponse = await axios.post(
-            'https://api.github.com/user/repos',
-            { name },
-            {
-                headers: {
-                    Authorization: `token ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`,
-                    Accept: 'application/vnd.github.v3+json',
-                },
-            }
-        );
-
-        // Save project details in DB
-        const newProject = new Project({
-            name,
-            description,
-            owner,
-            repoUrl: githubResponse.data.html_url,
-        });
-
-        await newProject.save();
-        res.status(201).json({ message: 'Project created successfully!', project: newProject });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!projectSnap.exists()) {
+      return res.status(404).json({ message: "Project not found" });
     }
+
+    res.json(projectSnap.data());
+  } catch (error) {
+    console.error("Error fetching project:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// 🔹 Create or Update a Project
+router.post("/", async (req, res) => {
+  const { id, title, description, githubRepo, creator } = req.body;
+
+  if (!id || !title || !description || !githubRepo || !creator) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    const projectRef = doc(db, "projects", id);
+    await setDoc(projectRef, { title, description, githubRepo, creator }, { merge: true });
+
+    res.json({ success: true, message: "Project saved successfully" });
+  } catch (error) {
+    console.error("Error saving project:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 module.exports = router;

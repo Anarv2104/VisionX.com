@@ -1,15 +1,18 @@
 const express = require('express');
 const path = require('path');
-const connectDB = require('./config/database');
+const cors = require('cors');
 require('dotenv').config();
+const { db } = require("./services/firebase");
 
 const app = express();
 const PORT = process.env.PORT || 5100;
 
-// Connect MongoDB before starting the server
-connectDB();
+// ✅ Fix CORS issues
+app.use(cors({
+    origin: "http://localhost:3000", // Allow frontend
+    credentials: true,
+}));
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -17,6 +20,9 @@ app.use(express.urlencoded({ extended: true }));
 const githubRoutes = require('./routes/github');
 const userRoutes = require('./routes/user');
 const projectRoutes = require('./routes/projects');
+
+
+
 
 app.use('/api/github', githubRoutes);
 app.use('/api/user', userRoutes);

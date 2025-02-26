@@ -1,12 +1,17 @@
-const axios = require('axios');
-require('dotenv').config();
+const axios = require("axios");
+const userTokens = require("../routes/github").userTokens; // Import token store
 
-const githubAPI = axios.create({
+const githubAPI = async (username) => {
+  const token = userTokens[username];
+  if (!token) throw new Error("No GitHub token found for user");
+
+  return axios.create({
     baseURL: "https://api.github.com",
     headers: {
-        Authorization: `token ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`,
-        Accept: "application/vnd.github.v3+json",
+      Authorization: `token ${token}`,
+      Accept: "application/vnd.github.v3+json",
     },
-});
+  });
+};
 
 module.exports = githubAPI;

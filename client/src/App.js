@@ -1,11 +1,66 @@
-import React from 'react';
+// import React from "react";
+// import { Routes, Route, Navigate } from "react-router-dom";
+// import LandingPage from "./components/LandingPage";
+// import Signup from "./components/Signup";
+// import GithubLink from "./components/GithubLink";
+// import Dashboard from "./pages/Dashboard";
+
+// const App = () => {
+//     const authToken = localStorage.getItem("authToken");
+
+//     return (
+//         <Routes>
+//             <Route path="/" element={<LandingPage />} />
+//             <Route path="/signup" element={<Signup />} />
+//             <Route path="/github-link" element={<GithubLink />} />
+//             <Route
+//                 path="/dashboard"
+//                 element={authToken ? <Dashboard /> : <Navigate to="/github-link" />}
+//             />
+//         </Routes>
+//     );
+// };
+
+// export default App;
+
+
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import LandingPage from "./components/LandingPage";
+import Signup from "./components/Signup";
+import GithubLink from "./components/GithubLink";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
     return (
-        <div>
-            <h6>   </h6>
-        </div>
+        <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/github-link" element={<GithubLink />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
     );
 };
 
 export default App;
+
+
+// import React from "react";
+// import { Routes, Route } from "react-router-dom";
+// import LandingPage from "./components/LandingPage";
+// import Signup from "./components/Signup";
+// import GithubLink from "./components/GithubLink";
+// import Dashboard from "./pages/Dashboard"; // ✅ Import the Dashboard
+
+// const App = () => {
+//   return (
+//     <Routes>
+//       <Route path="/" element={<LandingPage />} />
+//       <Route path="/signup" element={<Signup />} />
+//       <Route path="/github-link" element={<GithubLink />} />
+//       <Route path="/dashboard" element={<Dashboard />} /> {/* ✅ Add this */}
+//     </Routes>
+//   );
+// };
+
+// export default App;
